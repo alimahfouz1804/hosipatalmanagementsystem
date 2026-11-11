@@ -1,0 +1,76 @@
+HospitalArraysGUI - verified results
+Date: 11 November 2026 (Asia/Beirut)
+Platform: Windows x64, Release
+Compiler: Microsoft Visual C++ 19.51.36260.0, C++17
+
+BUILD: PASS
+  HospitalArraysGUI.exe and all four C++ test executables built successfully.
+
+TEST SUITES: 5 PASSED, 0 FAILED
+  HospitalValidation:          746 checks passed.
+  HospitalExtendedValidation:  1,253,685 checks passed.
+  HospitalPersistence:         596 checks passed.
+  HospitalGuiPersistence:      289 checks passed.
+  HospitalConsoleMenu:         21 checks passed across 3 scenarios.
+  Total:                      1,255,337 checks passed.
+
+FOCUSED VERIFICATION: PASS
+  91 additional checks verified patient deletion, cancellation, blocking deletion
+  while appointments exist, preserving other patients/room occupancy, loading
+  after deletion, and save failure/retry during deletion.
+
+ISSUE FOUND AND FIXED
+  At the previous minimum window size, the patient appointments button overlapped
+  the status line by 5 pixels. The minimum height is now 720 pixels. A regression
+  check verifies that the controls remain separated by at least 10 pixels.
+
+SOURCE CHECK: PASS
+  All 20 C++ source/header files were checked for comments. None remain.
+
+The tests use temporary files and do not add test records to the real project.
+
+File persistence verifies all fields, room assignments and appointment duration;
+empty/full datasets; maximum field lengths; escaped text; Unicode file paths;
+invalid, duplicate, oversized or incomplete snapshots; missing relationships;
+appointment conflicts; room capacity; and saving to missing, invalid or locked
+destinations without destroying the previous saved file. Existing temporary
+files are preserved when a new save chooses another temporary filename.
+
+GUI persistence tests compile the production gui.cpp handlers into a test
+executable. They use actual Windows controls in a hidden window and recorded
+dialog answers. They verify:
+  - Add for all five record categories automatically saves.
+  - Restored records populate all five category tables after window recreation.
+  - Update, room assignment/release and successful Delete save to disk.
+  - Duplicate additions and deletion of linked doctors preserve saved data.
+  - Save records, Reload records and reload cancellation behave correctly.
+  - A damaged reload preserves the current records and reports the error.
+  - A failed save retains changes in memory and reports the error.
+  - Closing during a save failure leaves the window open.
+  - Retrying after the file becomes writable saves the changes successfully.
+  - Find by ID, Clear form, Show all and selecting a table row work correctly.
+  - Invalid values and missing/overlapping appointments are refused.
+  - Patient/doctor schedules appear in chronological order.
+  - Available-room filtering, category changes and table sizing work.
+
+Console tests exercise all 24 menu choices, invalid numbers/choices, oversized
+text, input closure, searching, schedules, updates, room operations and deletion.
+
+ON-SCREEN VERIFICATION: PASS
+  Interactive testing became available during this verification run. An isolated
+  copy of the installed executable was opened with test data. All five category
+  forms and tables were inspected. Selecting/editing a patient and pressing
+  Update changed the saved file. The Save records button and available-rooms
+  filter worked. Closing and reopening the application restored the edited
+  patient. The new minimum-size clearance was verified in the automated GUI test.
+
+The build includes a Common Controls v6 manifest so the requested standard Windows
+controls can initialize correctly.
+
+Reproduce with CMake and a C++17 compiler:
+  cmake -S . -B build
+  cmake --build build --config Release
+  ctest --test-dir build -C Release --output-on-failure -V
+
+Python 3 is optional for the application and four C++ suites. It must be available
+when CMake configures the project to enable the console-menu suite.

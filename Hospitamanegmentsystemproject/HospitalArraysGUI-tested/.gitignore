@@ -1,0 +1,12 @@
+/.vs/
+/out/
+/build/
+/hospital_data.txt
+/hospital_data.txt.tmp
+/hospital_data.txt.tmp.*
+/hospital-file-tests-*/
+/hospital-gui-tests-*/
+*.exe
+*.obj
+*.pdb
+*.ilk
